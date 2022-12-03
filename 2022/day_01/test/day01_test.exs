@@ -18,8 +18,6 @@ defmodule Day01Test do
       9000,
       "",
       10000,
-      "",
-      5000,
       ""
     ]
 
@@ -30,15 +28,5 @@ defmodule Day01Test do
              {24000, 4},
              {10000, 5}
            ]
-  end
-
-  test "find_highest/1" do
-    assert Day01.find_highest([
-             {6000, 1},
-             {4000, 2},
-             {11000, 3},
-             {24000, 4},
-             {10000, 5}
-           ]) == {24000, 4}
   end
 end
