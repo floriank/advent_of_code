@@ -8,7 +8,10 @@ defmodule Main do
     |> String.split("\n")
     |> Enum.map(&to_integer/1)
     |> Day01.sum_calories()
-    |> Day01.find_highest()
+    |> Day01.order_by_highest()
+    |> Enum.slice(0..2)
+    |> Enum.map(fn {x, _} -> x end)
+    |> Enum.sum()
   end
 
   defp to_integer(""), do: ""

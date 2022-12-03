@@ -3,10 +3,9 @@ defmodule Day01 do
   Documentation for `Day01`.
   """
 
-  def find_highest(list) do
+  def order_by_highest(list) do
     list
     |> Enum.sort_by(fn {calories, _position} -> calories end, :desc)
-    |> hd()
   end
 
   @doc """
