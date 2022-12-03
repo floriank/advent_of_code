@@ -40,12 +40,36 @@ class Priority
 	end
 end
 
+class BadgeFinder
+	attr_reader :group
+
+	def self.by_group(group)
+		new(group:).find
+	end
+
+	def initialize(group:)
+		@group = group
+	end
+
+	def find
+		first, second, third = group.map { |rucksack| rucksack.split('') }
+
+		first.intersection(second).intersection(third).pop
+	end
+end
+
 rucksacks = File.read('./input').split("\n")
 
-result = Rucksack.sort(rucksacks).map do |rucksack|
+part_one = Rucksack.sort(rucksacks).map do |rucksack|
 	rucksack[:common]
 end.reduce(0) do |total, char|
 	total += Priority.calculate(char)
 end
 
-p result
+part_two = rucksacks.each_slice(3).map do |group|
+	BadgeFinder.by_group group
+end.reduce(0) do |total, char|
+	total += Priority.calculate(char)
+end
+
+p part_two

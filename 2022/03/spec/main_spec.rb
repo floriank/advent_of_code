@@ -65,3 +65,30 @@ describe Priority do
 	end
 end
 
+describe BadgeFinder do
+	describe '#by_group' do
+		subject(:badge) { described_class.by_group(group) }
+
+		let(:group) do
+			[
+				'vJrwpWtwJgWrhcsFMMfFFhFp',
+				'jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL',
+				'PmmdzqPrVvPwwTWBwg'
+			]
+		end
+
+		it { is_expected.to eql 'r' }
+
+		context 'when it is the second group' do
+			let(:group) do
+				[
+					'wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn',
+					'ttgJtRGJQctTZtZT',
+					'CrZsJsPPZsGzwwsLwLmpwMDw'
+				]
+			end
+
+			it { is_expected.to eql 'Z' }
+		end
+	end
+end
