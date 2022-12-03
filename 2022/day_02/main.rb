@@ -1,89 +1,81 @@
-require 'pry'
+# frozen_string_literal: true
+
 class RockPaperScissors
-	attr_reader :rounds
+  attr_reader :rounds
 
-	ROCK = 'A'.freeze
-	PAPER = 'B'.freeze
-	SCISSORS = 'C'.freeze
+  ROCK = 'A'
+  PAPER = 'B'
+  SCISSORS = 'C'
 
-	ROCK_COUNTER = 'X'.freeze
-	PAPER_COUNTER = 'Y'.freeze
-	SCISSORS_COUNTER = 'Z'.freeze
+  LOSS = 'X'
+  DRAW = 'Y'
+  WIN = 'Z'
 
-	SCORES = {
-		[ROCK, ROCK_COUNTER] => 1,
-		[PAPER, PAPER_COUNTER] => 2,
-		[SCISSORS, SCISSORS_COUNTER] => 3
-	}.freeze
+  SCORES = {
+    ROCK => 1,
+    PAPER => 2,
+    SCISSORS => 3
+  }.freeze
 
-	DRAW_SCORE = 3.freeze
-	WIN_SCORE = 6.freeze
+  COUNTER = {
+    ROCK => PAPER,
+    PAPER => SCISSORS,
+    SCISSORS => ROCK
+  }.freeze
 
-	def self.score(rounds)
-		new(rounds:).score
-	end
+  DRAW_SCORE = 3
+  WIN_SCORE = 6
 
-	def initialize(rounds:)
-		@rounds = rounds
-	end
+  def self.score(rounds)
+    new(rounds:).score
+  end
 
-	def score
-		result = rounds.map do |round|
-			enemy, me = round
-			calculate_score(enemy, me)
-		end
+  def initialize(rounds:)
+    @rounds = rounds
+  end
 
-		result.reduce(0, :+)
-	end
+  def score
+    result = rounds.map do |round|
+      enemy, me = round
+      calculate_score(enemy, me)
+    end
 
-	private
+    result.reduce(0, :+)
+  end
 
-	def calculate_score(enemy, me)
-		total = choice(me)
+  private
 
-		if draw?(enemy, me)
-			return total + DRAW_SCORE
-		end
+  def calculate_score(enemy, me)
+    total = 0
+    return total + choose(enemy) + DRAW_SCORE if should_draw?(me)
 
-		if win?(enemy, me)
-			return total + WIN_SCORE
-		end
+    return total + choose_win(enemy) + WIN_SCORE if should_win?(me)
 
-		total
-	end
+    total + choose(COUNTER.invert[enemy])
+  end
 
-	def choice(player)
-		_, value = SCORES.find { |keys, _| keys.include? player }
-		value
-	end
+  def choice(player)
+    _, value = SCORES.find { |keys, _| keys.include? player }
+    value
+  end
 
-	def draw?(player_one, player_two)
-		if [player_one, player_two] == [ROCK, ROCK_COUNTER]
-			true
-		elsif [player_one, player_two] == [PAPER, PAPER_COUNTER]
-			true
-		elsif [player_one, player_two] == [SCISSORS, SCISSORS_COUNTER]
-			true
-		else
-			false
-		end
-	end
+  def should_draw?(signal)
+    signal == DRAW
+  end
 
-	def win?(player_one, player_two)
-		if [player_one, player_two] == [ROCK, PAPER_COUNTER]
-			true
-		elsif [player_one, player_two] == [PAPER, SCISSORS_COUNTER]
-			true
-		elsif [player_one, player_two] == [SCISSORS, ROCK_COUNTER]
-			true
-		else
-			false
-		end
-	end
+  def should_win?(signal)
+    signal == WIN
+  end
+
+  def choose(player)
+    SCORES[player]
+  end
+
+  def choose_win(player)
+    SCORES[COUNTER[player]]
+  end
 end
 
-input = File.read("./input").split("\n").map { |str| str.split(" ")}
+input = File.read('./input').split("\n").map { |str| str.split(' ') }
 
 score = RockPaperScissors.score(input)
-
-p score

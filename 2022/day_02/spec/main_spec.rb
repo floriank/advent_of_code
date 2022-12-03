@@ -1,31 +1,32 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-
 describe RockPaperScissors do
-	describe '.score' do
-		subject(:score) { described_class.score(rounds) }
+  describe '.score' do
+    subject(:score) { described_class.score(rounds) }
 
-		let(:rounds) do
-			[
-				["A", "Y"], # Rock - Paper 8
-				["B", "X"], # Paper - Rock 1
-				["C", "Z"], # Scissors - Scissors 6
-			]
-		end
+    let(:rounds) do
+      [
+        %w[A Y], # Rock - Draw 4
+        %w[B X], # Paper - Loss 1
+        %w[C Z] # Scissors - Win 7
+      ]
+    end
 
-		it { is_expected.to eql 15 }
+    it { is_expected.to eql 12 }
 
-		context 'when the strategy is different' do
-			let(:rounds) do
-				[
-					["A", "Y"], # Rock - Paper
-					["B", "X"], # Paper - Rock
-					["C", "Z"], # Scissors - Scissors
-					["A", "Z"], # Rock - Scissors
-				]
-			end
+    context 'when the strategy is different' do
+      let(:rounds) do
+        [
+          %w[A Y], # Rock - Draw 4
+          %w[B X], # Paper - Loss 1
+          %w[C Z], # Scissors - Win 7
+          %w[A Z] # Rock - Win 8
+        ]
+      end
 
-			it { is_expected.to eql 18 }
-		end
-	end
+      it { is_expected.to eql 20 }
+    end
+  end
 end
