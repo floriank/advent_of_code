@@ -30,7 +30,7 @@ defmodule Day04 do
     |> Enum.map(&to_int/1)
     |> Enum.reject(&is_eol?/1)
     |> Enum.map(fn [x, y] -> Range.new(x, y) end)
-    |> is_contained?
+    |> is_overlap?
   end
 
   def contained?(_), do: false
@@ -59,6 +59,14 @@ defmodule Day04 do
     |> Enum.map(&MapSet.new/1)
     |> then(fn [x, y] = args ->
       MapSet.subset?(x, y) || MapSet.subset?(y, x)
+    end)
+  end
+
+  defp is_overlap?([shelf_one, shelf_two] = shelves) do
+    shelves
+    |> Enum.map(&MapSet.new/1)
+    |> then(fn [x, y] ->
+      MapSet.intersection(x, y) |> MapSet.to_list() |> length() > 0
     end)
   end
 end
