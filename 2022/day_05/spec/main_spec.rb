@@ -15,7 +15,9 @@ describe Crane do
   # move 1 from 1 to 2
 
   describe '.move' do
-    subject(:crane) { described_class.move(stacks:, instructions:) }
+    subject(:crane) { described_class.move(stacks:, instructions:, mode:) }
+
+    let(:mode) { 9000 }
 
     let(:stacks) do
       %w[
@@ -54,7 +56,13 @@ describe Crane do
         end.map { |line| { move: line[1].to_i, from: line[3].to_i, to: line[5].to_i } }
       end
 
-      it { is_expected.to eql ["F", "C", "V", "R", "L", "M", "V", "Q", "P"] }
+      it { is_expected.to eql %w[F C V R L M V Q P] }
+
+      context 'when the crane mode is over 9000' do
+        let(:mode) { 9001 }
+
+        it { is_expected.to eql %w[R W L W G J G F D] }
+      end
     end
   end
 end
