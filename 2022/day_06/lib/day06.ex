@@ -4,7 +4,28 @@ defmodule Day06 do
   """
 
   @doc """
-  Hello world.
+  Finds the message after a message marker
+
+  ## Examples
+
+    iex> Day06.find_start_of_message("mjqjpqmgbljsphdztnvjfqwrcgsmlb")
+    19
+    iex> Day06.find_start_of_message("bvwbjplbgvbhsrlpgdmjqwftvncz")
+    23
+    iex> Day06.find_start_of_message("nppdvjthqldpwncqszvftbrmjlhg")
+    23
+    iex> Day06.find_start_of_message("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg")
+    29
+    iex> Day06.find_start_of_message("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw")
+    26
+
+  """
+  def find_start_of_message(input) do
+    input |> String.split("") |> Enum.reject(fn str -> str === "" end) |> find_sequence(14)
+  end
+
+  @doc """
+  Finds the start of a message by looking for the position at which the message marker is complete
 
   ## Examples
 
@@ -31,22 +52,13 @@ defmodule Day06 do
     |> find_sequence()
   end
 
-  defp find_sequence(list \\ [], idx \\ 0)
+  defp find_sequence(list \\ [], len \\ 4, idx \\ 0)
 
-  defp find_sequence(list, idx) do
-    # char |> IO.inspect()
-    # idx |> IO.inspect()
-    # memo |> IO.inspect()
-
-    # !Enum.member?(memo, char) |> IO.inspect()
-    # memo |> length |> IO.inspect()
-    # IO.puts("----")
-
-    if list |> Enum.slice(idx, 4) |> all_different? do
-      idx + 4
+  defp find_sequence(list, len, idx) do
+    if list |> Enum.slice(idx, len) |> all_different? do
+      idx + len
     else
-      # tail |> IO.inspect()
-      find_sequence(list, idx + 1)
+      find_sequence(list, len, idx + 1)
     end
   end
 
