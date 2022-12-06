@@ -2,7 +2,7 @@ defmodule Day06Test do
   use ExUnit.Case
   doctest Day06
 
-  test "find_different_character/1" do
+  test "find_start_of_packet/1" do
     input =
       "rvnvzvhzzjgjgffclllnhhtltptgptgpttjhttsllmbbphbpbzpbpjjcwjwqwccnrrtvrtrfrwffnqff" <>
         "sggwzzhtzhthqhffmrrzsrrnrtrqqbllhrlrjrvvrvvgdgjgfjjtzznffrfvfggswgssccpcwpccstcs" <>
@@ -57,6 +57,6 @@ defmodule Day06Test do
         "cjttwtmtqfbtlqrttvjdwhfgcgcclrlswmzhzbfhjrggnhwtnffnqqcvldlttvvgrbcqbmqzvtflfmdb" <>
         "lhdbzphrqtbshvp"
 
-    assert Day06.find_different_characters(input) == 100
+    assert Day06.find_start_of_packet(input) == 1343
   end
 end
