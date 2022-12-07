@@ -33,14 +33,18 @@ defmodule Day07 do
       iex>   5626152 d.ext
       iex>   7214296 k
       iex>})
-      48_381_165
+      95437
   """
   def sum_file_size(input, max_file_size \\ 100_000) do
-    input |> sanitize |> _sum_file_size(max_file_size)
+    input |> sanitize |> _to_tree |> _sum_file_size(max_file_size)
   end
 
-  defp _sum_file_size(input, max_file_size) do
-    48_381_165
+  defp _sum_file_size(tree, max_file_size) do
+    tree
+    |> Qex.new()
+    |> _sum_sizes(%{})
+    |> Enum.filter(fn {_dirs, size} -> size <= max_file_size end)
+    |> Enum.reduce(0, fn {_dirs, size}, sum -> sum + size end)
   end
 
   defp sanitize(input) do
@@ -48,5 +52,45 @@ defmodule Day07 do
     |> String.split("\n")
     |> Enum.map(&String.trim(&1))
     |> Enum.reject(fn str -> str == "" end)
+  end
+
+  defp _to_tree(commands) do
+    commands
+    |> Enum.reduce({nil, %{}}, &parse/2)
+    |> then(fn {_, map} -> map end)
+    |> Enum.to_list()
+  end
+
+  defp parse("$ cd /", {_, dirs}), do: {[], dirs}
+  defp parse("$ cd ..", {[_ | path], dirs}), do: {path, dirs}
+  defp parse(<<"$ cd ", dir::binary>>, {path, dirs}), do: {[dir | path], dirs}
+  defp parse(<<"$ ls">>, {path, dirs}), do: {path, Map.put(dirs, path, {[], []})}
+
+  defp parse(<<"dir ", dir::binary>>, {path, dirs}) do
+    {path, dirs |> Map.update!(path, fn {dirs, files} -> {[[dir | path] | dirs], files} end)}
+  end
+
+  defp parse(file, {path, dirs}) do
+    [filesize, name] = file |> String.split()
+    {size, _} = filesize |> Integer.parse()
+    {path, dirs |> Map.update!(path, fn {dirs, files} -> {dirs, [{size, name} | files]} end)}
+  end
+
+  defp _sum_sizes([], _ = output), do: output
+
+  defp _sum_sizes(list, output) do
+    if Enum.empty?(list) do
+      output
+    else
+      {dir = {path, {children, files}}, list} = Qex.pop!(list)
+
+      if Enum.all?(children, &Map.has_key?(output, &1)) do
+        files = files |> Enum.reduce(0, fn {size, _}, sum -> sum + size end)
+        dirs = children |> Enum.reduce(0, fn name, sum -> sum + output[name] end)
+        _sum_sizes(list, output |> Map.put(path, dirs + files))
+      else
+        _sum_sizes(list |> Qex.push(dir), output)
+      end
+    end
   end
 end

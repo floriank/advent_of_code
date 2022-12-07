@@ -986,6 +986,6 @@ defmodule Day07Test do
   }
 
   test "find_file_size/2" do
-    assert Day07.sum_file_size(@input, 100_000) == 42
+    assert Day07.sum_file_size(@input, 100_000) == 1_723_892
   end
 end
