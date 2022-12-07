@@ -985,7 +985,12 @@ defmodule Day07Test do
     297578 hhhp.jvt
   }
 
-  test "find_file_size/2" do
+  test "sum_file_size/2" do
     assert Day07.sum_file_size(@input, 100_000) == 1_723_892
+  end
+
+  test "find_smallest_directory_to_delete/3" do
+    assert Day07.find_smallest_directory_to_delete(@input) ==
+             {["tjhzggs", "fqldn", "qcf"], 8_474_158}
   end
 end

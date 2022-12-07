@@ -39,12 +39,70 @@ defmodule Day07 do
     input |> sanitize |> _to_tree |> _sum_file_size(max_file_size)
   end
 
+  @doc """
+  finds the smallest directory to delete given maximum available space and reuired space to free
+
+  ### Examples
+
+      iex> Day07.find_smallest_directory_to_delete(~S{
+      iex>   $ cd /
+      iex>   $ ls
+      iex>   dir a
+      iex>   14848514 b.txt
+      iex>   8504156 c.dat
+      iex>   dir d
+      iex>   $ cd a
+      iex>   $ ls
+      iex>   dir e
+      iex>   29116 f
+      iex>   2557 g
+      iex>   62596 h.lst
+      iex>   $ cd e
+      iex>   $ ls
+      iex>   584 i
+      iex>   $ cd ..
+      iex>   $ cd ..
+      iex>   $ cd d
+      iex>   $ ls
+      iex>   4060174 j
+      iex>   8033020 d.log
+      iex>   5626152 d.ext
+      iex>   7214296 k
+      iex>})
+      {["d"], 24933642}
+  """
+  def find_smallest_directory_to_delete(
+        input,
+        space_available \\ 70_000_000,
+        space_needed \\ 30_000_000
+      ) do
+    input |> sanitize() |> _to_tree |> _find_smallest_directory(space_available, space_needed)
+  end
+
+  defp _find_smallest_directory(tree, space_available, space_needed) do
+    directories = tree |> _calculate_directory_size()
+
+    # we need the space still available
+    # [[]] is the root
+    usage = space_available - directories[[]]
+    required = space_needed - usage
+
+    directories
+    |> Enum.filter(fn {_, size} -> size >= required end)
+    |> Enum.min_by(fn {_, size} -> size end)
+  end
+
   defp _sum_file_size(tree, max_file_size) do
+    tree
+    |> _calculate_directory_size()
+    |> Enum.filter(fn {_dirs, size} -> size <= max_file_size end)
+    |> Enum.reduce(0, fn {_dirs, size}, sum -> sum + size end)
+  end
+
+  defp _calculate_directory_size(tree) do
     tree
     |> Qex.new()
     |> _sum_sizes(%{})
-    |> Enum.filter(fn {_dirs, size} -> size <= max_file_size end)
-    |> Enum.reduce(0, fn {_dirs, size}, sum -> sum + size end)
   end
 
   defp sanitize(input) do
