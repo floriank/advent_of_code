@@ -2,7 +2,7 @@ defmodule Day09Test do
   use ExUnit.Case
   doctest Day09
 
-  @input "./input"
+  def file(), do: File.read!("./input")
 
   def sanitize(input) do
     input
@@ -15,6 +15,6 @@ defmodule Day09Test do
   end
 
   test "count_tail_positions/2" do
-    # @input |> File.read!() |> sanitize |> Day09.count_tail_positions()
+    assert file() |> sanitize |> Day09.count_tail_positions() == 2600
   end
 end
