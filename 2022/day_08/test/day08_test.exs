@@ -118,6 +118,11 @@ defmodule Day08Test do
   end
 
   test "count_visible/1" do
-    assert @input |> sanitize() |> IO.inspect() |> Day08.count_visible() == 1698
+    assert @input |> sanitize() |> Day08.count_visible() == 1698
+  end
+
+  test "calculate_scenic_score/1" do
+    # {_coordinates, _score} = @input |> sanitize() |> Day08.calculate_scenic_score()
+    # assert score == 672_280
   end
 end
