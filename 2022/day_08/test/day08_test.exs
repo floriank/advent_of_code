@@ -122,7 +122,7 @@ defmodule Day08Test do
   end
 
   test "calculate_scenic_score/1" do
-    # {_coordinates, _score} = @input |> sanitize() |> Day08.calculate_scenic_score()
-    # assert score == 672_280
+    {_coordinates, score} = @input |> sanitize() |> Day08.calculate_scenic_score()
+    assert score == 672_280
   end
 end
