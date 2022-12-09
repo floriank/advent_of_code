@@ -4,6 +4,75 @@ defmodule Day08 do
   """
 
   @doc """
+  ### Examples
+
+      iex> Day08.calculate_scenic_score([
+      iex>   [3,0,3,7,3],
+      iex>   [2,5,5,1,2],
+      iex>   [6,5,3,3,2],
+      iex>   [3,3,5,4,9],
+      iex>   [3,5,3,9,0]
+      iex> ])
+      {{3,2}, 8}
+
+  """
+  def calculate_scenic_score(trees) do
+    trees
+    |> Enum.with_index()
+    |> Enum.reduce(%{}, fn {tree_line, row}, outer ->
+      tree_line
+      |> Enum.with_index()
+      |> Enum.map(fn {tree, col} ->
+        {row, col} |> IO.inspect()
+
+        top =
+          trees
+          |> column(col)
+          |> Enum.slice(0..(row - 1))
+          |> Enum.reverse()
+          |> _scenic_score(tree, 1)
+
+        bottom =
+          trees
+          |> column(col)
+          |> Enum.slice((row + 1)..-1)
+          |> Enum.reverse()
+          |> _scenic_score(tree, 1)
+
+        left =
+          tree_line
+          |> Enum.slice(0..(col - 1))
+          |> Enum.reverse()
+          |> _scenic_score(tree, 1)
+
+        right =
+          tree_line
+          |> Enum.slice((col + 1)..(length(tree_line) - 1))
+          |> _scenic_score(tree, 1)
+
+        {{row, col}, top, bottom, left, right, [score: top * bottom * left * right]}
+        |> IO.inspect()
+
+        {{row, col}, top * bottom * left * right}
+      end)
+      |> Enum.reduce(outer, fn {coordinates, score}, inner ->
+        inner |> Map.put(coordinates, score)
+      end)
+    end)
+  end
+
+  defp _scenic_score(:done, count), do: count
+  defp _scenic_score([], _, count), do: count - 1
+
+  defp _scenic_score([item | rest], tree, count) do
+    cond do
+      item == tree -> _scenic_score(:done, count)
+      item < tree -> _scenic_score(rest, tree, count + 1)
+      true -> count
+    end
+  end
+
+  @doc """
   counts the visible trees in a given list of lists
 
   ### Examples
