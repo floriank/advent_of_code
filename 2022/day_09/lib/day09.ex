@@ -4,6 +4,48 @@ defmodule Day09 do
   """
 
   @doc """
+  simulates a longer rope with an arbitrary length
+
+  ### Examples
+
+      iex> Day09.simulate_long([
+      iex>   {"R", 5},
+      iex>   {"U", 8},
+      iex>   {"L", 8},
+      iex>   {"D", 3},
+      iex>   {"R", 17},
+      iex>   {"D", 10},
+      iex>   {"L", 25},
+      iex>   {"U", 20},
+      iex> ], {11, 5}, 10) |> Enum.count()
+      36
+
+  """
+  def simulate_long(directions, {_x, _y} = start \\ {0, 0}, len) do
+    rope = for _ <- 1..len, do: start
+
+    directions
+    |> Enum.map(fn {dir, amount} ->
+      for _ <- 1..amount, do: dir
+    end)
+    |> List.flatten()
+    |> Enum.reduce([rope], fn dir, [[head | tail] | _] = ropes ->
+      next_head = head |> step(dir)
+      next_rope = [next_head | _follow(tail, next_head)]
+      [next_rope | ropes]
+    end)
+    |> Enum.map(&List.last/1)
+    |> Enum.uniq()
+  end
+
+  defp _follow([], _), do: []
+
+  defp _follow([knot | knots], head) do
+    new_knot = follow(knot, head)
+    [new_knot | _follow(knots, new_knot)]
+  end
+
+  @doc """
   simulates rope movements to find the tail's position count
 
   ### Examples
@@ -23,9 +65,9 @@ defmodule Day09 do
     iex> ]) |> Enum.count()
     13
   """
-  def simulate(directions, {_x, _y} = head \\ {0, 0}) do
+  def simulate(directions, {_x, _y} = start \\ {0, 0}) do
     directions
-    |> Enum.reduce([head], fn {direction, amount}, heads ->
+    |> Enum.reduce([start], fn {direction, amount}, heads ->
       # calculate all positions for the head
       1..amount
       |> Enum.reduce(heads, fn _, [position | _] = positions ->
@@ -33,14 +75,14 @@ defmodule Day09 do
       end)
     end)
     |> Enum.reverse()
-    |> Enum.reduce([{0, 0}], fn {_x, _y} = head, [tail | _] = tails ->
+    |> Enum.reduce([start], fn {_x, _y} = head, [tail | _] = tails ->
       # follow all head positions with the tail and add them to a set
       [tail |> follow(head) | tails]
     end)
     |> Enum.uniq()
   end
 
-  defp step({x, y}, direction, amount) do
+  defp step({x, y}, direction, amount \\ 1) do
     case direction do
       "U" ->
         {x, y + amount}

@@ -15,6 +15,10 @@ defmodule Day09Test do
   end
 
   test "simulate/2" do
-    assert file() |> sanitize |> Day09.simulate() |> Enum.count() == 6090
+    assert file() |> sanitize |> Day09.simulate({0, 0}) |> Enum.count() == 6090
+  end
+
+  test "simulate_long/3" do
+    assert file() |> sanitize |> Day09.simulate_long({0, 0}, 10) |> Enum.count() == 42
   end
 end
