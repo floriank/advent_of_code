@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CPU
-  attr_reader :register, :sum, :current_cycle
+  attr_reader :register, :sum, :current_cycle, :display
 
   CYCLES = [20, 60, 100, 140, 180, 220].freeze
 
@@ -12,6 +12,7 @@ class CPU
 
     @waiting_value_add = 0
     @wait = -1
+    @display = ['']
   end
 
   def next_cycle!
@@ -33,6 +34,22 @@ class CPU
     when 'noop'
     else
       raise 'unknown command!'
+    end
+  end
+
+  def render!
+    sprites = [register - 1, register, register + 1]
+
+    if sprites.include?((@current_cycle-1) % 40)
+      @display << '#'
+    else
+      @display << "_"
+    end
+
+    if @display.length == 40
+      @display << "\n"
+      puts @display.join()
+      @display = []
     end
   end
 

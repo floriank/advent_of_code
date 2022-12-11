@@ -155,6 +155,17 @@ describe CPU do
     noop"''
   end
 
+  before do
+    while cpu.waiting? || instructions.any?
+      unless cpu.waiting?
+        cmd, value = instructions.shift
+        cpu.run(cmd, value)
+      end
+      cpu.render!
+      cpu.next_cycle!
+    end
+  end
+
   let(:instructions) do
     input.split("\n").reject { |s| s == '' }.map do |line|
       command, value = line.strip.split(' ')
@@ -164,16 +175,6 @@ describe CPU do
   end
 
   describe 'Part 1' do
-    before do
-      while cpu.waiting? || instructions.any?
-        unless cpu.waiting?
-          cmd, value = instructions.shift
-          cpu.run(cmd, value)
-        end
-        cpu.next_cycle!
-      end
-    end
-
     describe '.sum' do
       subject(:sum) { cpu.sum }
 
@@ -184,6 +185,16 @@ describe CPU do
 
         it { is_expected.to eql 11820 }
       end
+    end
+  end
+
+  describe 'Part 2' do
+    describe '.display' do
+      subject(:display) { cpu.display }
+
+      let(:input) { File.read('./input') }
+
+      it { is_expected.to be_an Array }
     end
   end
 end
