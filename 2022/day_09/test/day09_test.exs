@@ -14,7 +14,7 @@ defmodule Day09Test do
     end)
   end
 
-  test "count_tail_positions/2" do
-    assert file() |> sanitize |> Day09.count_tail_positions() == 2600
+  test "simulate/2" do
+    assert file() |> sanitize |> Day09.simulate() |> Enum.count() == 6090
   end
 end
